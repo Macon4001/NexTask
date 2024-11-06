@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="1.png" alt="NexTask Logo" width="150">
+  <img src="C:\Users\macon\Downloads\NexTask\1.png alt="NexTask Logo" width="150">
 </p>
 
 <h1 align="center">NexTask</h1>
