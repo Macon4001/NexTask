@@ -7,8 +7,11 @@
       <ul class="nav-links">
         <li v-for="(link, index) in navLinks" :key="index" class="nav-link-item">
           <a :href="link.href" class="nav-link">{{ link.text }}</a>
-          <!-- Add a divider after each link except the last one -->
           <span v-if="index < navLinks.length - 1" class="divider">|</span>
+        </li>
+        <!-- Add profile picture here -->
+        <li class="nav-link-item profile-picture">
+          <img src="/images/PP.png" alt="Profile Picture" class="profile-pic" />
         </li>
       </ul>
     </nav>
@@ -31,16 +34,15 @@
   </script>
   
   <style scoped>
-.navbar {
-  width: 100%; /* Ensures full page width */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0px 100px; /* Adjusted padding for a thinner look */
-  background-color: #f9f9f9;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-}
-
+  .navbar {
+    width: 100%; /* Ensures full page width */
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0px 100px; /* Adjusted padding for a thinner look */
+    background-color: #f9f9f9;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  }
   
   .nav-logo-container {
     display: flex;
@@ -63,6 +65,7 @@
     list-style: none;
     padding: 0;
     margin: 0;
+    align-items: center;
   }
   
   .nav-link-item {
@@ -76,7 +79,6 @@
     font-size: 16px;
     font-weight: 500;
     transition: color 0.3s;
-    padding-right: 100 auto;
   }
   
   .nav-link:hover {
@@ -86,6 +88,18 @@
   .divider {
     margin: 0 10px;
     color: #888; /* Subtle color for the divider */
+  }
+  
+  .profile-pic {
+    width: 40px; /* Adjust size as needed */
+    height: 40px; /* Adjust size as needed */
+    border-radius: 50%; /* Makes the image circular */
+    margin-left: 20px; /* Adds spacing to the left */
+    transition: border 0.3s; /* Adds smooth transition for hover effect */
+  }
+  
+  .profile-pic:hover {
+    border: 2px solid #4CAF50; /* Green outline on hover */
   }
   </style>
   
