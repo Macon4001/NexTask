@@ -1,122 +1,163 @@
 <template>
-          <Nav /> 
-    <div class="home-container">
-      <header class="header">
-      </header>
-      
-      <main class="main-content">
-        <div v-if="tasks.length === 0" class="empty-state">
-          <p>You have no tasks yet. Start by creating one!</p>
-          <button @click="createTask" class="btn-primary">Create New Task</button>
-        </div>
-        <ul v-else class="task-list">
-          <li v-for="task in tasks" :key="task.id" class="task-item">
-            <h3>{{ task.title }}</h3>
-            <p>{{ task.description }}</p>
-          </li>
-        </ul>
-      </main>
-    </div>
-   <Footer />
-  </template>
-  
-  <script>
-  import Nav from './Nav.vue'; 
-  import Footer from './Footer.vue'
+  <Nav />
+  <div class="home-container">
+    <header class="header">
+      <h1>Task Manager</h1>
+    </header>
 
-  export default {
-    components: {
-      Nav, // Register the Nav component
-      Footer,
+    <main class="main-content">
+      <!-- New Task Column -->
+      <div class="task-column new-tasks" @dragover.prevent @drop="onDrop('newTasks')">
+        <h2>New Tasks</h2>
+        <div
+          v-for="(task, index) in newTasks"
+          :key="task.id"
+          class="task-item"
+          draggable="true"
+          @dragstart="onDragStart('newTasks', index)"
+        >
+          <h3>{{ task.title }}</h3>
+          <p>{{ task.description }}</p>
+        </div>
+      </div>
+
+      <!-- In Progress Column -->
+      <div class="task-column in-progress-tasks" @dragover.prevent @drop="onDrop('inProgressTasks')">
+        <h2>In Progress</h2>
+        <div
+          v-for="(task, index) in inProgressTasks"
+          :key="task.id"
+          class="task-item"
+          draggable="true"
+          @dragstart="onDragStart('inProgressTasks', index)"
+        >
+          <h3>{{ task.title }}</h3>
+          <p>{{ task.description }}</p>
+        </div>
+      </div>
+
+      <!-- Completed Task Column -->
+      <div class="task-column completed-tasks" @dragover.prevent @drop="onDrop('completedTasks')">
+        <h2>Completed Tasks</h2>
+        <div
+          v-for="(task, index) in completedTasks"
+          :key="task.id"
+          class="task-item"
+          draggable="true"
+          @dragstart="onDragStart('completedTasks', index)"
+        >
+          <h3>{{ task.title }}</h3>
+          <p>{{ task.description }}</p>
+        </div>
+      </div>
+    </main>
+  </div>
+  <Footer />
+</template>
+
+<script>
+import Nav from './Nav.vue';
+import Footer from './Footer.vue';
+
+export default {
+  components: {
+    Nav,
+    Footer,
+  },
+  data() {
+    return {
+      newTasks: [
+        { id: 1, title: 'Task 1', description: 'This is a new task.' },
+        { id: 4, title: 'Task 4', description: 'Another new task.' }
+      ],
+      inProgressTasks: [
+        { id: 2, title: 'Task 2', description: 'This task is in progress.' }
+      ],
+      completedTasks: [
+        { id: 3, title: 'Task 3', description: 'This task is completed.' }
+      ],
+      draggedTask: null,
+      draggedFrom: '',
+    };
+  },
+  methods: {
+    onDragStart(listName, index) {
+      this.draggedTask = this[listName][index];
+      this.draggedFrom = listName;
     },
-    data() {
-      return {
-        tasks: [
-          // Replace with task data fetched from your API or store
-          { id: 1, title: 'Example Task 1', description: 'This is an example task.' },
-          { id: 2, title: 'Example Task 2', description: 'This is another task.' }
-        ]
-      };
-    },
-    methods: {
-      createTask() {
-        // Navigate to a task creation page or open a task creation modal
-        alert('Navigate to create task functionality');
+    onDrop(targetListName) {
+      if (this.draggedTask && this.draggedFrom !== targetListName) {
+        // Remove task from original list
+        this[this.draggedFrom] = this[this.draggedFrom].filter(
+          (task) => task.id !== this.draggedTask.id
+        );
+        // Add task to new list
+        this[targetListName].push(this.draggedTask);
+        this.draggedTask = null;
+        this.draggedFrom = '';
       }
-    }
-  };
-  </script>
-  
-  <style scoped>
-  .logo {
-    width: 100px; /* Adjust as needed */
-    height: auto;
-  }
-  
-  .home-container {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 20px;
-    font-family: 'Arial', sans-serif;
-  }
-  
-  .header {
-    text-align: left;
-    margin-bottom: 20px;
-  }
-  
-  .subtitle {
-    color: #888;
-  }
-  
-  .main-content {
-    background: #f9f9f9;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  }
-  
-  .empty-state {
-    text-align: center;
-    color: #555;
-  }
-  
-  .btn-primary {
-    background-color: #4CAF50;
-    color: #fff;
-    border: none;
-    padding: 10px 20px;
-    margin-top: 10px;
-    cursor: pointer;
-    border-radius: 4px;
-    transition: background-color 0.3s;
-  }
-  
-  .btn-primary:hover {
-    background-color: #45a049;
-  }
-  
-  .task-list {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .task-item {
-    background: #fff;
-    padding: 15px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  .task-item h3 {
-    margin: 0;
-    font-size: 1.2em;
-  }
-  
-  .task-item p {
-    margin: 5px 0 0;
-    color: #666;
-  }
-  </style>
-  
+    },
+  },
+};
+</script>
+
+<style scoped>
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Arial', sans-serif;
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.main-content {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px; /* Space between columns */
+}
+
+.task-column {
+  flex: 1;
+  background: #f9f9f9;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: outline 0.3s ease-in-out; /* Animation for outline */
+}
+
+.new-tasks .task-item {
+  outline: 2px solid red;
+}
+
+.in-progress-tasks .task-item {
+  outline: 2px solid orange;
+}
+
+.completed-tasks .task-item {
+  outline: 2px solid green;
+}
+
+.task-item {
+  background: #fff;
+  padding: 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
+  cursor: grab;
+  transition: outline 3s ease-in-out; /* Animation for changing outline */
+}
+
+.task-item h3 {
+  margin: 0;
+  font-size: 1.2em;
+}
+
+.task-item p {
+  margin: 5px 0 0;
+  color: #666;
+}
+</style>
