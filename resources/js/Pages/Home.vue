@@ -31,7 +31,7 @@
         <div
           v-for="(task, index) in newTasks"
           :key="task.id"
-          :class="['task-item', 'new-task-outline']"
+          class="task-item task-item-new"
           draggable="true"
           @dragstart="onDragStart('newTasks', index)"
         >
@@ -53,7 +53,7 @@
         <div
           v-for="(task, index) in inProgressTasks"
           :key="task.id"
-          :class="['task-item', 'in-progress-outline']"
+          class="task-item task-item-in-progress"
           draggable="true"
           @dragstart="onDragStart('inProgressTasks', index)"
         >
@@ -75,7 +75,7 @@
         <div
           v-for="(task, index) in completedTasks"
           :key="task.id"
-          :class="['task-item', 'completed-outline']"
+          class="task-item task-item-completed"
           draggable="true"
           @dragstart="onDragStart('completedTasks', index)"
         >
@@ -165,18 +165,19 @@ export default {
   },
 };
 </script>
-
 <style scoped>
 .home-container {
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
-  font-family: 'Arial', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  color: #333;
 }
 
 .header {
   text-align: center;
   margin-bottom: 20px;
+  font-size: 2rem;
 }
 
 .btn-create-task {
@@ -186,129 +187,128 @@ export default {
   color: #fff;
   border: none;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background-color 0.3s;
 }
 
 .btn-create-task:hover {
   background-color: #45a049;
 }
 
-.btn-add-task {
-  margin-bottom: 20px;
-  padding: 10px 20px;
-  background-color: #4CAF50;
-  color: #fff;
-  border: none;
-  cursor: pointer;
-  border-radius: 4px;
-}
-.btn-add-task:hover {
-  background-color: #45a049;
-}
-
-
 .create-task-column {
-  flex: 1;
   background: #f9f9f9;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   margin-bottom: 20px;
 }
 
 .task-form {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+}
+
+.input-title,
+.input-description, 
+.input-deadline, 
+.input-importance { 
+  padding: 12px; 
+  border: 1px solid #d1d1d1; 
+  border-radius: 8px; 
+  background-color: #fff; 
+  outline: none; 
+  font-size: 1rem; 
+  transition: border-color 0.2s; 
 }
 
 .input-title,
 .input-description,
 .input-deadline,
 .input-importance {
-  padding: 10px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+  border-color: #4CAF50;
 }
 
 .main-content {
   display: flex;
   justify-content: space-between;
-  gap: 20px;
+  gap: 24px;
 }
 
 .task-column {
   flex: 1;
-  background: #f9f9f9;
+  background: #f0f0f0;
   padding: 20px;
-  border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .task-item {
   background: #fff;
   padding: 15px;
-  margin-bottom: 10px;
+  margin-bottom: 12px;
   border-radius: 8px;
-  box-shadow: 0 1px 5px rgba(0, 0, 0, 0.1);
-  cursor: grab;
-  display: flex;
-  align-items: flex-start;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid transparent;
+  transition: border-color 0.2s;
   position: relative;
-  transition: outline 0.3s ease-in-out;
 }
 
-.new-task-outline {
-  outline: 2px solid #00aaff; /* Blue outline for new tasks */
+.task-item-new {
+  border-color: #007aff;
 }
 
-.in-progress-outline {
-  outline: 2px solid #ff9d00; /* Orange outline for in-progress tasks */
+.task-item-in-progress {
+  border-color: #ff9500;
 }
 
-.completed-outline {
-  outline: 2px solid #09dc09; /* Green outline for completed tasks */
+.task-item-completed {
+  border-color: #34c759;
 }
 
 .importance-indicator {
-  width: 15px;
-  height: 15px;
-  border-radius: 50%;
-  font-size: 0.75em;
   position: absolute;
-  top: 5px;
-  right: 5px; /* Moved to the top right */
+  top: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
   display: flex;
   justify-content: center;
   align-items: center;
+  font-weight: bold;
   color: #fff;
+  font-size: 0.75rem;
 }
 
 .importance-1 {
-  background-color: #ffcc00; /* Yellow */
+  background-color: #ffcc00;
 }
 
 .importance-2 {
-  background-color: #ff9900; /* Orange */
+  background-color: #ff9900;
 }
 
 .importance-3 {
-  background-color: #ff0000; /* Red */
+  background-color: #ff3b30;
 }
 
 .task-item h3 {
-  margin: 0;
-  font-size: 1.2em;
+  margin: 0 0 8px;
+  font-size: 1.2rem;
 }
 
 .task-item p {
-  margin: 5px 0 0;
-  color: #666;
+  margin: 0;
+  font-size: 0.95rem;
+  color: #555;
 }
 
 .task-deadline {
-  color: #999;
-  font-size: 0.9em;
+  font-size: 0.85rem;
+  color: #888;
+  margin-top: 8px;
 }
 
 .btn-delete-task {
@@ -319,7 +319,8 @@ export default {
   border: none;
   cursor: pointer;
   border-radius: 4px;
-  margin-left: auto;
+  font-size: 0.85rem;
+  transition: background-color 0.2s;
 }
 
 .btn-delete-task:hover {
