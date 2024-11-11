@@ -1,4 +1,8 @@
 <template>
+  <div class="page-wrapper">
+    <main class="main-content">
+      <!-- Your main content here -->
+    </main>
     <footer class="footer">
       <div class="footer-content">
         <div class="footer-logo">
@@ -26,7 +30,8 @@
         </div>
       </div>
     </footer>
-  </template>
+  </div>
+</template>
   
   <script>
   export default {
@@ -35,6 +40,29 @@
   </script>
   
   <style scoped>
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+.page-wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+}
+
+.footer {
+  background-color: #f1f1f1;
+  padding: 20px 30px;
+  border-top: 1px solid #ddd;
+  font-family: 'Arial', sans-serif;
+  color: #333;
+}
+
   .footer {
     background-color: #f1f1f1;
     padding: 20px 30px;

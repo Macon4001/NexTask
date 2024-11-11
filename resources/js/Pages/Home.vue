@@ -23,7 +23,8 @@
     <button @click="showTaskForm = !showTaskForm" class="btn-create-task">
       {{ showTaskForm ? 'Cancel' : '+ New Task' }}
     </button>
-
+    
+    <div class="page-wrapper">
     <main class="main-content">
       <!-- New Task Column -->
       <div class="task-column new-tasks" @dragover.prevent @drop="onDrop('newTasks')">
@@ -38,12 +39,32 @@
           <div class="importance-indicator" :class="`importance-${task.importance}`">
             {{ getImportanceSymbol(task.importance) }}
           </div>
-          <div class="task-content">
+          <div>
             <h3>{{ task.title }}</h3>
             <p>{{ task.description }}</p>
             <p class="task-deadline">Deadline: {{ task.deadline }}</p>
           </div>
+          <button @click="editTask(task, 'newTasks')" class="btn-edit-task">...</button>
           <button @click="deleteTask('newTasks', index)" class="btn-delete-task">Delete</button>
+        </div>
+      </div>
+
+      <!-- Edit Task Modal -->
+      <div v-if="editingTask" class="edit-task-modal-overlay">
+        <div class="edit-task-modal">
+          <h2>Edit Task</h2>
+          <div class="task-form">
+            <input v-model="editingTask.title" placeholder="Edit Title" class="input-title" />
+            <textarea v-model="editingTask.description" placeholder="Edit Description" class="input-description"></textarea>
+            <input type="date" v-model="editingTask.deadline" class="input-deadline" />
+            <select v-model="editingTask.importance" class="input-importance">
+              <option value="1">!</option>
+              <option value="2">!!</option>
+              <option value="3">!!!</option>
+            </select>
+            <button @click="saveTask(editingTaskType)" class="btn-save-task">Save</button>
+            <button @click="cancelEdit()" class="btn-cancel-task">Cancel</button>
+          </div>
         </div>
       </div>
 
@@ -60,17 +81,18 @@
           <div class="importance-indicator" :class="`importance-${task.importance}`">
             {{ getImportanceSymbol(task.importance) }}
           </div>
-          <div class="task-content">
+          <div>
             <h3>{{ task.title }}</h3>
             <p>{{ task.description }}</p>
             <p class="task-deadline">Deadline: {{ task.deadline }}</p>
           </div>
+          <button @click="editTask(task, 'inProgressTasks')" class="btn-edit-task">...</button>
           <button @click="deleteTask('inProgressTasks', index)" class="btn-delete-task">Delete</button>
         </div>
       </div>
 
-      <!-- Completed Task Column -->
-      <div class="task-column completed-tasks" @dragover.prevent @drop="onDrop('completedTasks')">
+    <!-- Completed Task Column -->
+    <div class="task-column completed-tasks" @dragover.prevent @drop="onDrop('completedTasks')">
         <h2>Completed Tasks</h2>
         <div
           v-for="(task, index) in completedTasks"
@@ -82,15 +104,17 @@
           <div class="importance-indicator" :class="`importance-${task.importance}`">
             {{ getImportanceSymbol(task.importance) }}
           </div>
-          <div class="task-content">
+          <div>
             <h3>{{ task.title }}</h3>
             <p>{{ task.description }}</p>
             <p class="task-deadline">Deadline: {{ task.deadline }}</p>
           </div>
+          <button @click="editTask(task, 'completedTasks')" class="btn-edit-task">...</button>
           <button @click="deleteTask('completedTasks', index)" class="btn-delete-task">Delete</button>
         </div>
       </div>
     </main>
+  </div>
   </div>
   <Footer />
 </template>
@@ -123,6 +147,7 @@ export default {
       ],
       draggedTask: null,
       draggedFrom: '',
+      editingTask: null, // add this property
     };
   },
   methods: {
@@ -162,6 +187,21 @@ export default {
     deleteTask(listName, index) {
       this[listName].splice(index, 1);
     },
+    editTask(task, taskType) {
+    if (this.editingTask && this.editingTask.id === task.id) {
+      this.editingTask = null; // Close the edit modal if the same task is clicked again
+    } else {
+      this.editingTask = { ...task };
+      this.editingTaskType = taskType;
+    }
+  },
+  saveTask(taskType) {
+    // Save logic here...
+    this.editingTask = null; // Reset after saving
+  },
+  cancelEdit() {
+    this.editingTask = null; // Reset when cancelling
+  }
   },
 };
 </script>
@@ -197,7 +237,7 @@ export default {
 }
 
 .create-task-column {
-  background: #f9f9f9;
+  background: #ff0000;
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
@@ -230,18 +270,30 @@ export default {
   border-color: #4CAF50;
 }
 
-.main-content {
+.page-wrapper {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  display: flex;
   gap: 24px;
+}
+
+.task-columns {
+  display: flex;
+  width: 100%;
 }
 
 .task-column {
   flex: 1;
-  background: #f0f0f0;
+  background: rgba(224, 223, 223, 0.6); /* Translucent background */
   padding: 20px;
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(10px); /* Frosted glass effect */
 }
 
 .task-item {
@@ -269,7 +321,7 @@ export default {
 
 .importance-indicator {
   position: absolute;
-  top: 8px;
+  bottom: 8px;
   right: 8px;
   width: 20px;
   height: 20px;
@@ -326,4 +378,86 @@ export default {
 .btn-delete-task:hover {
   background-color: #c0392b;
 }
+
+.btn-edit-task {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #000000;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+  font-size: 12px; /* Set font size to a non-zero value */
+  transition: background-color 0.2s;
+}
+
+.btn-edit-task:hover {
+  background-color: #00bfff;
+  color: #fff;
+}
+
+.edit-task-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.edit-task-modal {
+  background: rgba(255, 255, 255, 0.7); /* Translucent white background */
+  padding: 20px;
+  border-radius: 5px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: 400px; /* Adjust width as needed */
+  backdrop-filter: blur(10000%); /* Frosted glass effect */
+  z-index: 1000;
+}
+
+.task-form {
+  display: flex;
+  flex-direction: column;
+}
+
+.input-title, .input-description, .input-deadline, .input-importance {
+  margin-bottom: 10px;
+  padding: 5px;
+  font-size: 16px;
+}
+.btn-save-task {
+  background-color: #28a745; /* Green background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  padding: 10px 20px; /* Add padding */
+  font-size: 16px; /* Set font size */
+  cursor: pointer; /* Change cursor on hover */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.btn-save-task:hover {
+  background-color: #218838; /* Darker green on hover */
+}
+
+.btn-cancel-task {
+  background-color: #dc3545; /* Red background */
+  color: white; /* White text */
+  border: none; /* Remove border */
+  padding: 10px 20px; /* Add padding */
+  font-size: 16px; /* Set font size */
+  cursor: pointer; /* Change cursor on hover */
+  border-radius: 5px; /* Rounded corners */
+}
+
+.btn-cancel-task:hover {
+  background-color: #c82333; /* Darker red on hover */
+}
+
 </style>
